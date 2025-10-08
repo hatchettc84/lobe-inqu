@@ -255,7 +255,7 @@ const nextConfig: NextConfig = {
       permanent: true,
       source: '/welcome',
     },
-    // TODO: 等 V2 做强制跳转吧
+    // Note: Volcengine provider redirect will be implemented in V2
     // {
     //   destination: '/settings/provider/volcengine',
     //   permanent: true,
@@ -277,11 +277,41 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
 
-  webpack(config) {
+  webpack(config, { dev }) {
     config.experiments = {
       asyncWebAssembly: true,
       layers: true,
     };
+
+    // Optimize build performance for Vercel
+    if (isProd && !dev) {
+      config.optimization = {
+        ...config.optimization,
+        splitChunks: {
+          ...config.optimization.splitChunks,
+          cacheGroups: {
+            ...config.optimization.splitChunks?.cacheGroups,
+            
+            // Separate PGLite WASM files
+pglite: {
+              chunks: 'all',
+              name: 'pglite',
+              priority: 20,
+              test: /[/\\]node_modules[/\\]@electric-sql[/\\]pglite[/\\]/,
+            },
+            
+            // Separate large dependencies
+vendor: {
+              chunks: 'all',
+              name: 'vendors',
+              priority: 10,
+              test: /[/\\]node_modules[/\\]/,
+            },
+          },
+          chunks: 'all',
+        },
+      };
+    }
 
     // 开启该插件会导致 pglite 的 fs bundler 被改表
     if (enableReactScan && !isUsePglite) {
@@ -327,4 +357,4 @@ const withPWA =
       })
     : noWrapper;
 
-export default withBundleAnalyzer(withPWA(nextConfig as NextConfig));
+export default withBundleAnalyzer(withPWA(nextConfig));

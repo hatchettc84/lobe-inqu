@@ -1,4 +1,16 @@
 {
+  "build": {
+    "env": {
+      "NODE_OPTIONS": "--max-old-space-size=6144"
+    }
+  },
   "buildCommand": "bun run build",
-  "installCommand": "bun install"
+  "devCommand": "bun run dev",
+  "framework": "nextjs",
+  "functions": {
+    "src/app/api/**/*.ts": {
+      "maxDuration": 60
+    }
+  },
+  "installCommand": "bun install --frozen-lockfile"
 }
