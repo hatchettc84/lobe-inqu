@@ -5,6 +5,15 @@
     }
   },
   "buildCommand": "bun run build",
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next",
+      "config": {
+        "distDir": ".next"
+      }
+    }
+  ],
   "devCommand": "bun run dev",
   "framework": "nextjs",
   "functions": {
@@ -13,5 +22,11 @@
     }
   },
   "installCommand": "bun install --frozen-lockfile",
-  "rootDirectory": "."
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/"
+    }
+  ],
+  "version": 2
 }
