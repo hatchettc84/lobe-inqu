@@ -3,6 +3,9 @@ import withSerwistInit from '@serwist/next';
 import type { NextConfig } from 'next';
 import ReactComponentName from 'react-scan/react-component-name/webpack';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { IgnorePlugin } = require('next/dist/compiled/webpack/webpack');
+
 const isProd = process.env.NODE_ENV === 'production';
 const buildWithDocker = process.env.DOCKER === 'true';
 const isDesktop = process.env.NEXT_PUBLIC_IS_DESKTOP_APP === '1';
@@ -283,6 +286,26 @@ const nextConfig: NextConfig = {
       layers: true,
     };
 
+    // Ignore OpenTelemetry packages to prevent optional deps from breaking builds
+    config.plugins.push(
+      new IgnorePlugin({ resourceRegExp: /^@opentelemetry\// }),
+      new IgnorePlugin({ resourceRegExp: /^@lobechat\/observability-otel/ }),
+    );
+
+    // Avoid resolving OTEL packages at bundle time
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@lobechat/observability-otel': false,
+      '@lobechat/observability-otel/node': false,
+    } as any;
+
+    // Treat missing OTEL deps as externals (server runtime won't import them)
+    config.externals = config.externals || [];
+    config.externals.push({
+      '@opentelemetry/exporter-jaeger': 'commonjs @opentelemetry/exporter-jaeger',
+      '@opentelemetry/winston-transport': 'commonjs @opentelemetry/winston-transport',
+    });
+
     // Optimize build performance for Vercel
     if (isProd && !dev) {
       config.optimization = {
@@ -291,17 +314,17 @@ const nextConfig: NextConfig = {
           ...config.optimization.splitChunks,
           cacheGroups: {
             ...config.optimization.splitChunks?.cacheGroups,
-            
+
             // Separate PGLite WASM files
-pglite: {
+            pglite: {
               chunks: 'all',
               name: 'pglite',
               priority: 20,
               test: /[/\\]node_modules[/\\]@electric-sql[/\\]pglite[/\\]/,
             },
-            
+
             // Separate large dependencies
-vendor: {
+            vendor: {
               chunks: 'all',
               name: 'vendors',
               priority: 10,
