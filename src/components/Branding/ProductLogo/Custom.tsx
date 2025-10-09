@@ -35,6 +35,9 @@ const CustomTextLogo = memo<FlexboxProps & { size: number }>(({ size, style, ...
 
 const CustomImageLogo = memo<Omit<ImageProps, 'alt' | 'src'> & { size: number }>(
   ({ size, ...rest }) => {
+    // If no logo URL is configured, return null to avoid rendering empty img tag
+    if (!BRANDING_LOGO_URL) return null;
+
     return (
       <Image
         alt={BRANDING_NAME}
@@ -74,12 +77,20 @@ const CustomLogo = memo<LobeChatProps>(({ extra, size = 32, className, style, ty
   switch (type) {
     case '3d':
     case 'flat': {
-      logoComponent = <CustomImageLogo size={size} style={style} {...rest} />;
+      // Fall back to text logo if no image URL is configured
+      logoComponent = BRANDING_LOGO_URL ? (
+        <CustomImageLogo size={size} style={style} {...rest} />
+      ) : (
+        <CustomTextLogo size={size} style={style} {...rest} />
+      );
       break;
     }
     case 'mono': {
-      logoComponent = (
+      // Fall back to text logo if no image URL is configured
+      logoComponent = BRANDING_LOGO_URL ? (
         <CustomImageLogo size={size} style={{ filter: 'grayscale(100%)', ...style }} {...rest} />
+      ) : (
+        <CustomTextLogo size={size} style={style} {...rest} />
       );
       break;
     }
@@ -88,11 +99,14 @@ const CustomLogo = memo<LobeChatProps>(({ extra, size = 32, className, style, ty
       break;
     }
     case 'combine': {
-      logoComponent = (
+      // If logo URL exists, show image + text, otherwise just text
+      logoComponent = BRANDING_LOGO_URL ? (
         <>
           <CustomImageLogo size={size} />
           <CustomTextLogo size={size} style={{ marginLeft: Math.round(size / 4) }} />
         </>
+      ) : (
+        <CustomTextLogo size={size} style={style} {...rest} />
       );
 
       if (!extra)
@@ -105,7 +119,12 @@ const CustomLogo = memo<LobeChatProps>(({ extra, size = 32, className, style, ty
       break;
     }
     default: {
-      logoComponent = <CustomImageLogo size={size} style={style} {...rest} />;
+      // Fall back to text logo if no image URL is configured
+      logoComponent = BRANDING_LOGO_URL ? (
+        <CustomImageLogo size={size} style={style} {...rest} />
+      ) : (
+        <CustomTextLogo size={size} style={style} {...rest} />
+      );
       break;
     }
   }

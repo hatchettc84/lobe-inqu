@@ -1,6 +1,7 @@
 import { ModelTag } from '@lobehub/icons';
 import { Skeleton } from 'antd';
 import isEqual from 'fast-deep-equal';
+import Link from 'next/link';
 import { memo } from 'react';
 import { Flexbox } from 'react-layout-kit';
 
@@ -41,6 +42,17 @@ const TitleTags = memo(() => {
       <ModelSwitchPanel>
         <ModelTag model={model} />
       </ModelSwitchPanel>
+      <Link
+        href={'?agui=1'}
+        style={{
+          border: '1px solid var(--colorBorder)',
+          borderRadius: 6,
+          fontSize: 12,
+          padding: '2px 6px',
+        }}
+      >
+        AG-UI
+      </Link>
       {isAgentEnableSearch && <SearchTags />}
       {showPlugin && plugins?.length > 0 && <PluginTag plugins={plugins} />}
       {hasKnowledge && <KnowledgeTag data={enabledKnowledge} />}

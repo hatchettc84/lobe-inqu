@@ -2,10 +2,12 @@
 
 import { Alert, Hotkey, Icon } from '@lobehub/ui';
 import { BotMessageSquare, LucideCheck, MessageSquarePlus } from 'lucide-react';
-import { Suspense, memo } from 'react';
+import { Suspense, memo, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { Flexbox } from 'react-layout-kit';
 
+import HumePanel from '@/components/HumeVoice/Panel';
+import VoiceFAB from '@/components/HumeVoice/VoiceFAB';
 import { type ActionKeys, ChatInputProvider, DesktopChatInput } from '@/features/ChatInput';
 import WideScreenContainer from '@/features/Conversation/components/WideScreenContainer';
 import { useChatStore } from '@/store/chat';
@@ -32,6 +34,7 @@ const leftActions: ActionKeys[] = [
 const rightActions: ActionKeys[] = ['saveTopic'];
 
 const ClassicChatInput = memo(() => {
+  const [voiceOpen, setVoiceOpen] = useState(false);
   const { t } = useTranslation('chat');
   const { send, generating, disabled, stop } = useSend();
   const [useCmdEnterToSend, updatePreference] = useUserStore((s) => [
@@ -143,6 +146,8 @@ const ClassicChatInput = memo(() => {
         )}
         <DesktopChatInput />
       </WideScreenContainer>
+      <VoiceFAB onClick={() => setVoiceOpen(true)} />
+      {voiceOpen && <HumePanel onClose={() => setVoiceOpen(false)} />}
       <Suspense>
         <MessageFromUrl />
       </Suspense>

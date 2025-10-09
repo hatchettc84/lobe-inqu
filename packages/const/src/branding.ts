@@ -5,7 +5,7 @@
 export const LOBE_CHAT_CLOUD = 'InQubatorAI Cloud';
 
 export const BRANDING_NAME = 'InQubatorAI';
-export const BRANDING_LOGO_URL = '';
+export const BRANDING_LOGO_URL = null; // Set to null to use text logo instead of empty string
 
 export const ORG_NAME = 'InQubatorAI';
 

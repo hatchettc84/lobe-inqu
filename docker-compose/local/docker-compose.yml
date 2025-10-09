@@ -20,9 +20,9 @@ services:
     image: pgvector/pgvector:pg17
     container_name: lobe-postgres
     ports:
-      - '5432:5432'
+      - '5433:5432'
     volumes:
-      - './data:/var/lib/postgresql/data'
+      - 'postgres_data:/var/lib/postgresql/data'
     environment:
       - 'POSTGRES_DB=${LOBE_DB_NAME}'
       - 'POSTGRES_PASSWORD=${POSTGRES_PASSWORD}'
@@ -40,7 +40,7 @@ services:
     container_name: lobe-minio
     network_mode: 'service:network-service'
     volumes:
-      - './s3_data:/etc/minio/data'
+      - 'minio_data:/etc/minio/data'
     environment:
       - 'MINIO_API_CORS_ALLOW_ORIGIN=*'
     env_file:
@@ -238,9 +238,9 @@ services:
       - ENDPOINT=127.0.0.1:4317
 
 volumes:
-  data:
+  postgres_data:
     driver: local
-  s3_data:
+  minio_data:
     driver: local
   grafana_data:
     driver: local

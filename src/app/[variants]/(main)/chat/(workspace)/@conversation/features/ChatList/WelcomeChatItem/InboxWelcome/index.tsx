@@ -6,14 +6,13 @@ import { memo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { Center, Flexbox } from 'react-layout-kit';
 
+// Removed original suggestions in favor of AG-UI welcome
+import AGUIWelcome from '@/components/AGUI/Welcome';
 import { BRANDING_NAME } from '@/const/branding';
-import { isCustomBranding } from '@/const/version';
 import { useGreeting } from '@/hooks/useGreeting';
 import { featureFlagsSelectors, useServerConfigStore } from '@/store/serverConfig';
 
 import AddButton from './AddButton';
-import AgentsSuggest from './AgentsSuggest';
-import QuestionSuggest from './QuestionSuggest';
 
 const useStyles = createStyles(({ css, responsive }) => ({
   container: css`
@@ -43,7 +42,8 @@ const useStyles = createStyles(({ css, responsive }) => ({
 const InboxWelcome = memo(() => {
   const { t } = useTranslation('welcome');
   const { styles } = useStyles();
-  const mobile = useServerConfigStore((s) => s.isMobile);
+  // retain for layout if needed in future
+  // const mobile = useServerConfigStore((s) => s.isMobile);
   const greeting = useGreeting();
   const { showWelcomeSuggest, showCreateSession } = useServerConfigStore(featureFlagsSelectors);
 
@@ -78,12 +78,7 @@ const InboxWelcome = memo(() => {
             appName: BRANDING_NAME,
           })}
         </Markdown>
-        {showWelcomeSuggest && (
-          <>
-            <AgentsSuggest mobile={mobile} />
-            {!isCustomBranding && <QuestionSuggest mobile={mobile} />}
-          </>
-        )}
+        {showWelcomeSuggest && <AGUIWelcome />}
       </Flexbox>
     </Center>
   );

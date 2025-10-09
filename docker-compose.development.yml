@@ -23,14 +23,16 @@ services:
     extends:
       file: docker-compose/local/docker-compose.yml
       service: minio
-  casdoor:
-    extends:
-      file: docker-compose/local/docker-compose.yml
-      service: casdoor
-  searxng:
-    extends:
-      file: docker-compose/local/docker-compose.yml
-      service: searxng
+  # Temporarily disabled due to file sharing permissions
+  # casdoor:
+  #   extends:
+  #     file: docker-compose/local/docker-compose.yml
+  #     service: casdoor
+  # Temporarily disabled due to file sharing permissions
+  # searxng:
+  #   extends:
+  #     file: docker-compose/local/docker-compose.yml
+  #     service: searxng
 
   grafana:
     profiles:
@@ -68,9 +70,9 @@ services:
       service: otel-tracing-test
 
 volumes:
-  data:
+  postgres_data:
     driver: local
-  s3_data:
+  minio_data:
     driver: local
   grafana_data:
     driver: local
