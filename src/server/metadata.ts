@@ -122,7 +122,7 @@ export class Meta {
         },
       ],
       locale,
-      siteName: 'LobeChat',
+      siteName: BRANDING_NAME,
       title,
       type,
       url,
